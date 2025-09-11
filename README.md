@@ -25,7 +25,7 @@ EMAIL=emre.ozer@siriusaitech.com
 PASSWORD=Ee123456
 ```
 
-3. **.gitignore dosyasını oluşturun:**
+3. **.gitignore dosyasını oluşturun:** oversityle test
 
 ```
 .env
