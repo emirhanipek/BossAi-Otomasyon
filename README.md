@@ -16,7 +16,7 @@ Bu proje, Playwright ve Node.js kullanarak https://app.sertelvida.com.tr/ adresi
 npm install
 ```
 
-2. **.env dosyasını oluşturun:** - deneme 
+2. **.env dosyasını oluşturun:** - deneme ----
 
 Proje kök dizinine bir `.env` dosyası ekleyin ve aşağıdaki gibi doldurun:
 
