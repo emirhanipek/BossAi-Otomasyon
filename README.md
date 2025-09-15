@@ -8,7 +8,7 @@ Bu proje, Playwright ve Node.js kullanarak https://app.sertelvida.com.tr/ adresi
 - Her sorunun cevabını bekler, ardından bir sonraki soruya geçer
 - Giriş bilgileri .env dosyasından alınır (gizlilik için)
 
-## Kurulum
+## Kurulum  -s- - - s - s- 
 
 1. **Gerekli paketleri yükleyin:**
 
@@ -16,7 +16,7 @@ Bu proje, Playwright ve Node.js kullanarak https://app.sertelvida.com.tr/ adresi
 npm install
 ```
 
-2. **.env dosyasını oluşturun:**
+2. **.env dosyasını oluşturun:** - deneme ----
 
 Proje kök dizinine bir `.env` dosyası ekleyin ve aşağıdaki gibi doldurun:
 
@@ -25,7 +25,7 @@ EMAIL=emre.ozer@siriusaitech.com
 PASSWORD=Ee123456
 ```
 
-3. **.gitignore dosyasını oluşturun:**
+3. **.gitignore dosyasını oluşturun:** oversityle test
 
 ```
 .env
