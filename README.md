@@ -8,7 +8,7 @@ Bu proje, Playwright ve Node.js kullanarak https://app.sertelvida.com.tr/ adresi
 - Her sorunun cevabını bekler, ardından bir sonraki soruya geçer
 - Giriş bilgileri .env dosyasından alınır (gizlilik için)
 
-## Kurulum
+## Kurulum--
 
 1. **Gerekli paketleri yükleyin:**
 
