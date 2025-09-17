@@ -16,12 +16,12 @@ const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
     // E-posta gir (çevre değişkenlerinden)
     await page.fill('#email', "tahir.yildiz@siriusaitech.com");
-    await page.click('button:has-text("Devam")');
+    await page.click('button:has-text("Devam et")');
     await page.waitForTimeout(1000);
 
     // Şifre gir (çevre değişkenlerinden)
     await page.fill('#password', "Ss123456");
-    await page.click('button:has-text("Giriş")');
+    await page.click('button:has-text("Giriş yap hadi")');
 
     // Sayfa yüklensin 
     await page.waitForTimeout(5000);
