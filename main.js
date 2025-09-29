@@ -16,7 +16,7 @@ function createWindow() {
     width: 900,
     height: 700,
     webPreferences: {
-      nodentegration: false,
+      nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
@@ -61,7 +61,7 @@ ipcMain.handle('select-excel', async () => {
   });
 
   if (!result.canceled && result.filePaths.length > 0) {
-    stre.set('excelPath', result.filePaths[0]);
+    store.set('excelPath', result.filePaths[0]);
     return result.filePaths[0];
   }
   return null;
@@ -70,8 +70,8 @@ ipcMain.handle('select-excel', async () => {
 // Botu başlat
 ipcMain.handle('start-bot', async (event, data) => {
   // Daha önce çalışan bir bot varsa durdur
-  if (boProcess) {
-    botPocess.kill();
+  if (botProcess) {
+    botProcess.kill();
     botProcess = null;
   }
 
@@ -89,7 +89,7 @@ const fs = require('fs');
 (async () => {
     try {
         // Excel dosyasından soruları oku
-        const workook = XLSX.readFile('${data.excelPath.replace(/\\/g, '\\\\')}');
+        const workbook = XLSX.readFile('${data.excelPath.replace(/\\/g, '\\\\')}');
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
@@ -101,7 +101,7 @@ const fs = require('fs');
 
         // E-posta gir
         await page.fill('#email', '${data.email}');
-        await age.click('button:has-text("Devam")');
+        await page.click('button:has-text("Devam")');
         await page.waitForTimeout(1000);
 
         // Şifre gir
@@ -109,7 +109,7 @@ const fs = require('fs');
         await page.click('button:has-text("Giriş")');
 
         // Sayfa yüklensin 
-        await pge.waitForTimeout(5000);
+        await page.waitForTimeout(5000);
         
         // 1. satır başlıksa oradan başlama
         for (let i = 0; i < data.length; i++) {
@@ -120,7 +120,7 @@ const fs = require('fs');
             process.send({ type: 'log', message: \`Soru \${i} gönderiliyor: \${question}\` });
 
             try {
-                // AP yanıtını beklemek için bir Promise oluştur
+                // API yanıtını beklemek için bir Promise oluştur
                 const apiResponsePromise = page.waitForResponse(
                     response => response.url().includes('https://api.sertelvida.com.tr/ai/0.0.1/ask/'), 
                     { timeout: 180000 } // 3 dakikaya kadar bekle
@@ -128,7 +128,7 @@ const fs = require('fs');
 
                 // Soru input alanını bul ve soruyu gönder
                 await page.fill('textarea', question);
-                await age.press('textarea', 'Enter');
+                await page.press('textarea', 'Enter');
                 
                 // API yanıtını bekle
                 process.send({ type: 'log', message: \`Soru \${i} için API yanıtı bekleniyor...\` });
@@ -138,12 +138,11 @@ const fs = require('fs');
                 // Cevabın DOM'a yansıması için biraz daha fazla bekleme
                 await page.waitForTimeout(3000);
                 
-             const ceaplar = await page.$$('p.text-sm.whitespace-pre-wrap');
+                const cevaplar = await page.$$('p.text-sm.whitespace-pre-wrap');
+                const sonCevap = await cevaplar[cevaplar.length - 1].textContent();
 
-            const sonCevap = await cevaplar[cevaplar.length - 1].textContent();
-
-            console.log("Cevap:", sonCevap);
-            data[i][1] = sonCevap;
+                console.log("Cevap:", sonCevap);
+                data[i][1] = sonCevap;
                 
                 // Kısa bir bekleme
                 await page.waitForTimeout(2000);
@@ -153,14 +152,14 @@ const fs = require('fs');
             }
         }
 
-        process.end({ type: 'log', message: "Tüm sorular gönderildi." });
+        process.send({ type: 'log', message: "Tüm sorular gönderildi." });
         
         // Cevapları Excel'e kaydet
         const updatedSheet = XLSX.utils.aoa_to_sheet(data);
         workbook.Sheets[workbook.SheetNames[0]] = updatedSheet;
         XLSX.writeFile(workbook, '${data.excelPath.replace(/\\/g, '\\\\')}');
         
-        procss.send({ type: 'complete' });
+        process.send({ type: 'complete' });
         await browser.close();
         
     } catch (error) {
@@ -169,7 +168,7 @@ const fs = require('fs');
 })();
   `;
 
-  const tempSciptPath = path.join(app.getPath('temp'), 'bot-script.js');
+  const tempScriptPath = path.join(app.getPath('temp'), 'bot-script.js');
   fs.writeFileSync(tempScriptPath, botScript);
 
   // Bot çalıştırılacak dizin ayarları - gerekli modülleri bulabilmesi için proje dizini kullanılacak
@@ -183,7 +182,7 @@ const fs = require('fs');
   });
 
   // Bot çıktılarını yakala
-  botProcess.tdout.on('data', (data) => {
+  botProcess.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
     mainWindow.webContents.send('bot-log', data.toString());
   });
@@ -194,7 +193,7 @@ const fs = require('fs');
   });
 
   // Mesaj olaylarını dinle
-  botProcess.on('mssage', (message) => {
+  botProcess.on('message', (message) => {
     if (message.type === 'log') {
       mainWindow.webContents.send('bot-log', message.message);
     } else if (message.type === 'error') {
@@ -206,7 +205,7 @@ const fs = require('fs');
     }
   });
 
-  botProcess.on('cose', (code) => {
+  botProcess.on('close', (code) => {
     console.log(`Bot process exited with code ${code}`);
     mainWindow.webContents.send('bot-stopped', code);
     botProcess = null;
