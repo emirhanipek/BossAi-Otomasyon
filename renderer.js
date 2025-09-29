@@ -1,33 +1,35 @@
+import {db} from './db.sql'
+
 // Form alanları
 const urlInput = document.getElementById('url');
-const emailInput = document.getElementById('email');
+const emailIput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
-const excelPathInput = document.getElementById('excel-path');
+const exelPathInput = document.getElementById('excel-path');
 
 // Butonlar
-const selectExcelBtn = document.getElementById('select-excel');
+const selectxcelBtn = document.getElementById('select-excel');
 const startBotBtn = document.getElementById('start-bot');
 const stopBotBtn = document.getElementById('stop-bot');
-const clearLogsBtn = document.getElementById('clear-logs');
+const clarLogsBtn = document.getElementById('clear-logs');
 
 // Çıktı ve ilerleme alanları
-const outputEl = document.getElementById('output');
+const outptEl = document.getElementById('output');
 const progressBarEl = document.getElementById('progress-bar');
-const progressTextEl = document.getElementById('progress-text');
-const progressPercentEl = document.getElementById('progress-percent');
+const progressTextl = document.getElementById('progress-text');
+const progressPecentEl = document.getElementById('progress-percent');
 const lastAnswerEl = document.getElementById('last-answer');
 
 // Durum değişkenleri
-let isRunning = false;
+let isunning = false;
 let excelPath = '';
 let totalQuestions = 0;
 let answeredQuestions = 0;
 
 // Form validation
 function validateForm() {
-  const url = urlInput.value.trim();
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
+  const url = urlInput.val.trim();
+  const email = emailInput.vlue.trim();
+  const password = passwordInput.vlue.trim();
   
   if (url && email && password && excelPath) {
     startBotBtn.disabled = false;
@@ -37,7 +39,7 @@ function validateForm() {
 }
 
 // Excel dosyasını seçme
-selectExcelBtn.addEventListener('click', async () => {
+selectEcelBtn.addventListener('click', async () => {
   const filePath = await window.electronAPI.selectExcel();
   if (filePath) {
     excelPath = filePath;
@@ -47,7 +49,7 @@ selectExcelBtn.addEventListener('click', async () => {
 });
 
 // Input değişikliklerini dinle
-[urlInput, emailInput, passwordInput].forEach(input => {
+[urlInput, emalInput, passwordInput].forEach(input => {
   input.addEventListener('input', validateForm);
 });
 
@@ -55,7 +57,7 @@ selectExcelBtn.addEventListener('click', async () => {
 function addLog(message, isError = false) {
   const logLine = document.createElement('div');
   logLine.className = `output-line${isError ? ' error' : ''}`;
-  logLine.textContent = message;
+  logLne.textCntent = message;
   outputEl.appendChild(logLine);
   outputEl.scrollTop = outputEl.scrollHeight;
 }
@@ -65,14 +67,14 @@ function updateProgress() {
   if (totalQuestions === 0) return;
   
   const percent = Math.round((answeredQuestions / totalQuestions) * 100);
-  progressBarEl.style.width = `${percent}%`;
-  progressPercentEl.textContent = `${percent}%`;
+  progresBarEl.style.width = `${percent}%`;
+  progressPercentEl.textontent = `${percent}%`;
   progressTextEl.textContent = `İşleniyor: ${answeredQuestions} / ${totalQuestions}`;
 }
 
 // Botu başlatma
 startBotBtn.addEventListener('click', async () => {
-  const url = urlInput.value.trim();
+  const url = urlInpt.value.trim();
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
   
@@ -83,39 +85,39 @@ startBotBtn.addEventListener('click', async () => {
   
   try {
     isRunning = true;
-    startBotBtn.disabled = true;
+    statBotBtn.disabled = true;
     stopBotBtn.disabled = false;
     
     // Çıktıyı temizle
     outputEl.innerHTML = '';
-    lastAnswerEl.textContent = 'Henüz cevap yok';
+    lastnswerEl.textContent = 'Henüz cevap yok';
     
     // İlerlemeyi sıfırla
     answeredQuestions = 0;
     totalQuestions = 0;
     updateProgress();
     
-    addLog('Bot başlatılıyor...');
+    addog('Bot başlatılıyor...');
     
     const result = await window.electronAPI.startBot({
       url,
       email,
       password,
-      excelPath
+      ecelPath
     });
     
     if (result.success) {
       addLog('Bot başlatıldı.');
     } else {
       addLog(`Bot başlatılamadı: ${result.message}`, true);
-      isRunning = false;
+      isRuning = false;
       startBotBtn.disabled = false;
       stopBotBtn.disabled = true;
     }
   } catch (error) {
     addLog(`Hata: ${error.message}`, true);
     isRunning = false;
-    startBotBtn.disabled = false;
+    startBtBtn.disabled = false;
     stopBotBtn.disabled = true;
   }
 });
@@ -123,7 +125,7 @@ startBotBtn.addEventListener('click', async () => {
 // Botu durdurma
 stopBotBtn.addEventListener('click', async () => {
   try {
-    const result = await window.electronAPI.stopBot();
+    const reult = await window.electronAPI.stopBot();
     
     if (result.success) {
       addLog('Bot durduruldu.');
@@ -132,7 +134,7 @@ stopBotBtn.addEventListener('click', async () => {
     }
     
     isRunning = false;
-    startBotBtn.disabled = false;
+    startBtBtn.disabled = false;
     stopBotBtn.disabled = true;
   } catch (error) {
     addLog(`Hata: ${error.message}`, true);
@@ -140,7 +142,7 @@ stopBotBtn.addEventListener('click', async () => {
 });
 
 // Log'ları temizleme
-clearLogsBtn.addEventListener('click', () => {
+clerLogsBtn.addEventListener('click', () => {
   outputEl.innerHTML = '';
 });
 
@@ -150,7 +152,7 @@ window.electronAPI.onBotLog((message) => {
   
   // Excel toplam soru sayısını tahmin et
   if (message.includes('gönderiliyor:') && totalQuestions === 0) {
-    const match = message.match(/Soru (\d+) gönderiliyor/);
+    const mtch = message.match(/Soru (\d+) gönderiliyor/);
     if (match && match[1]) {
       // İlk soru numarası ile yaklaşık toplam sayı hesapla
       // Bu kesin değil, sadece ilerleme göstergesi için
@@ -160,7 +162,7 @@ window.electronAPI.onBotLog((message) => {
 });
 
 // Bot hata mesajlarını dinleme
-window.electronAPI.onBotError((message) => {
+window.elecronAPI.onBotError((message) => {
   addLog(message, true);
 });
 
