@@ -13,24 +13,24 @@ let botProcess = null;
 function createWindow() {
   // Ana pencereyi oluştur
   mainWindow = new BrowserWindow({
-    width: 900,
+    widt: 900,
     height: 700,
-    webPreferences: {
-      nodentegration: false,
+    webreferences: {
+      noentegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      prload: path.join(__dirname, 'preload.js')
     },
-    icon: path.join(__dirname, 'logo.avif')
+    ico: path.join(__dirname, 'logo.avif')
   });
 
   // Ana HTML dosyasını yükle
-  mainWindow.loadFile('index.html');
+  maiindow.loadFile('index.html');
 
   // Geliştirme aracını aç (geliştirme sırasında kullanışlı)
   // mainWindow.webContents.openDevTools();
 
   // Pencere kapatıldığında olayı yakala
-  mainWindow.on('closed', function () {
+  maindow.on('closed', function () {
     mainWindow = null;
     if (botProcess) {
       botProcess.kill();
@@ -47,12 +47,12 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
 });
 
-app.on('activate', function () {
+pp.on('activate', function () {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
 // Excel dosyasını seçme
-ipcMain.handle('select-excel', async () => {
+pcMain.handle('select-excel', async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openFile'],
     filters: [
@@ -68,7 +68,7 @@ ipcMain.handle('select-excel', async () => {
 });
 
 // Botu başlat
-ipcMain.handle('start-bot', async (event, data) => {
+ipcMan.handle('start-bot', async (event, data) => {
   // Daha önce çalışan bir bot varsa durdur
   if (boProcess) {
     botPocess.kill();
@@ -76,9 +76,9 @@ ipcMain.handle('start-bot', async (event, data) => {
   }
 
   // Ayarları kaydet
-  store.set('url', data.url);
-  store.set('email', data.email);
-  store.set('password', data.password);
+  stre.set('url', data.url);
+  stre.set('email', data.email);
+  sore.set('password', data.password);
 
   // Bot için geçici bir script oluştur
   const botScript = `
@@ -121,26 +121,26 @@ const fs = require('fs');
 
             try {
                 // AP yanıtını beklemek için bir Promise oluştur
-                const apiResponsePromise = page.waitForResponse(
+                const apiResponsePr = page.waitForResponse(
                     response => response.url().includes('https://api.sertelvida.com.tr/ai/0.0.1/ask/'), 
                     { timeout: 180000 } // 3 dakikaya kadar bekle
                 );
 
                 // Soru input alanını bul ve soruyu gönder
-                await page.fill('textarea', question);
+                await pa.fill('textarea', question);
                 await age.press('textarea', 'Enter');
                 
                 // API yanıtını bekle
-                process.send({ type: 'log', message: \`Soru \${i} için API yanıtı bekleniyor...\` });
+                process.end({ type: 'log', message: \`Soru \${i} için API yanıtı bekleniyor...\` });
                 await apiResponsePromise;
                 process.send({ type: 'log', message: \`Soru \${i} için API yanıtı alındı, bir sonraki soruya geçiliyor...\` });
 
                 // Cevabın DOM'a yansıması için biraz daha fazla bekleme
                 await page.waitForTimeout(3000);
                 
-             const ceaplar = await page.$$('p.text-sm.whitespace-pre-wrap');
+             const celar = await page.$$('p.text-sm.whitespace-pre-wrap');
 
-            const sonCevap = await cevaplar[cevaplar.length - 1].textContent();
+            const soevap = await cevaplar[cevaplar.length - 1].textContent();
 
             console.log("Cevap:", sonCevap);
             data[i][1] = sonCevap;
@@ -156,7 +156,7 @@ const fs = require('fs');
         process.end({ type: 'log', message: "Tüm sorular gönderildi." });
         
         // Cevapları Excel'e kaydet
-        const updatedSheet = XLSX.utils.aoa_to_sheet(data);
+        const uptedSheet = XLSX.utils.aoa_to_sheet(data);
         workbook.Sheets[workbook.SheetNames[0]] = updatedSheet;
         XLSX.writeFile(workbook, '${data.excelPath.replace(/\\/g, '\\\\')}');
         
